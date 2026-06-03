@@ -10,14 +10,15 @@
                      headers: baseHeaders("application/json"), }); }; }
 
  function mutateShareUrl(url :string) {
-   // Example placeholder logic — replace with your discovered pattern
- 
-   // Common pattern: change `/shares/...` → `/api/...` or similar
-   if (url.includes("/shares/")) {
+   // Enhance with discovered patterns eg `/shared/...' -> `/api/...'
+  
+   if (url.includes("/shares/")) { /* MS CoPilot */
      return url.replace("/shares/", "/c/api/conversations/shares/");
    }
- 
-   // Fallback: return as-is (or throw)
+   if (url.includes("/share/")) { /* Anthropic */
+     return url.replace("/share/", "/api/chat_snapshots/");
+   }
+   // Fallback: return as-is /* ChatGPT? */
    return url;
  }
 
@@ -86,7 +87,8 @@
        try {
          upstreamRes = await fetch(resolvedUrl, {
            headers: {
-             "user-agent": "JoPilot/0.1"
+//"Accept": "application/json",
+             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0",
            }
          });
        } catch (e :any) {
@@ -127,7 +129,7 @@
          resolved: resolvedUrl,
          ordered,
          messageCount: Array.isArray(messages) ? messages.length : null,
-         messages
+         messages: messages || data || rawText,
        });
  
      } catch (err :any) {
